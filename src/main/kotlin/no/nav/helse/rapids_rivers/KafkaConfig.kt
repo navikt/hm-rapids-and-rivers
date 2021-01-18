@@ -85,6 +85,7 @@ class KafkaConfig(
                 }
             }
         } else {
+            //Aiven
             put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
             put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name)
             put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "")
