@@ -170,7 +170,7 @@ class RapidApplication internal constructor(
                         sslTruststoreLocationEnvKey = env["KAFKA_TRUSTSTORE_PATH"],
                         sslTruststorePasswordEnvKey = env["KAFKA_TRUSTSTORE_PASSWORD"],
                         sslKeystoreLocationEnvKey = env["KAFKA_KEYSTORE_PATH"],
-                        sslKeystorePasswordEnvKey = env["KAFKA_CREDSTORE_PASSWORD"],
+                        sslKeystorePasswordEnvKey = env["KAFKA_KEYSTORE_PASSWORD"],
                         autoOffsetResetConfig = env["KAFKA_RESET_POLICY"],
                         autoCommit = env["KAFKA_AUTO_COMMIT"]?.let { "true" == it.toLowerCase() },
                         maxIntervalMs = env["KAFKA_MAX_POLL_INTERVAL_MS"]?.toInt(),
