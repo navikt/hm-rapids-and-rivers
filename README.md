@@ -1,4 +1,4 @@
-[![](https://jitpack.io/v/navikt/rapids-and-rivers.svg)](https://jitpack.io/#navikt/rapids-and-rivers)
+[![](https://jitpack.io/v/navikt/hm-rapids-and-rivers.svg)](https://jitpack.io/#navikt/hm-rapids-and-rivers)
 
 # Rapids and rivers
 
@@ -106,4 +106,4 @@ Spørsmål knyttet til koden eller prosjektet kan stilles som issues her på Git
 
 ## For NAV-ansatte
 
-Interne henvendelser kan sendes via Slack i kanalen #rapids-and-rivers.
+Interne henvendelser kan sendes via Slack i kanalen #hm-rapids-and-rivers.

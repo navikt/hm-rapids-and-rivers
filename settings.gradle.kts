@@ -1,1 +1,1 @@
-rootProject.name = "rapids-and-rivers"
+rootProject.name = "hm-rapids-and-rivers"

@@ -86,7 +86,7 @@ val githubPassword: String? by project
 publishing {
     repositories {
         maven {
-            url = uri("https://maven.pkg.github.com/navikt/rapids-and-rivers")
+            url = uri("https://maven.pkg.github.com/navikt/hm-rapids-and-rivers")
             credentials {
                 username = githubUser
                 password = githubPassword
@@ -99,7 +99,7 @@ publishing {
             pom {
                 name.set("rapids-rivers")
                 description.set("Rapids and Rivers")
-                url.set("https://github.com/navikt/rapids-and-rivers")
+                url.set("https://github.com/navikt/hm-rapids-and-rivers")
 
                 licenses {
                     license {
@@ -109,9 +109,9 @@ publishing {
                 }
 
                 scm {
-                    connection.set("scm:git:https://github.com/navikt/rapids-and-rivers.git")
-                    developerConnection.set("scm:git:https://github.com/navikt/rapids-and-rivers.git")
-                    url.set("https://github.com/navikt/rapids-and-rivers")
+                    connection.set("scm:git:https://github.com/navikt/hm-rapids-and-rivers.git")
+                    developerConnection.set("scm:git:https://github.com/navikt/hm-rapids-and-rivers.git")
+                    url.set("https://github.com/navikt/hm-rapids-and-rivers")
                 }
             }
             from(components["java"])
