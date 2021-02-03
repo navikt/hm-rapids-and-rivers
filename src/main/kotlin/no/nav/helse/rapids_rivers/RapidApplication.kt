@@ -163,8 +163,8 @@ class RapidApplication internal constructor(
                         bootstrapServers = env.getValue("KAFKA_BOOTSTRAP_SERVERS"),
                         consumerGroupId = env.getValue("KAFKA_CONSUMER_GROUP_ID"),
                         clientId = instanceId,
-                        username = "/var/run/secrets/nais.io/service_user/username".readFile(),
-                        password = "/var/run/secrets/nais.io/service_user/password".readFile(),
+                        username = "/var/run/secrets/nais.io/service_user/username".readFile() ?: getValueFromEnvSafe("KAFKA_SERVICEUSER_USER", env),
+                        password = "/var/run/secrets/nais.io/service_user/password".readFile() ?: getValueFromEnvSafe("KAFKA_SERVICEUSER_PWD", env),
                         truststore = env["NAV_TRUSTSTORE_PATH"],
                         truststorePassword = env["NAV_TRUSTSTORE_PASSWORD"],
                         sslTruststoreLocationEnvKey = env["KAFKA_TRUSTSTORE_PATH"],
@@ -204,5 +204,12 @@ private fun String.readFile() =
     try {
         File(this).readText(Charsets.UTF_8)
     } catch (err: FileNotFoundException) {
+        null
+    }
+
+private fun getValueFromEnvSafe(key: String, env: Map<String, String>) =
+    try {
+        env.getValue(key)
+    } catch (e: NoSuchElementException) {
         null
     }
