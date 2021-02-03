@@ -13,7 +13,7 @@ import java.util.*
 
 // Understands how to configure kafka from environment variables
 class KafkaConfig(
-    private val isKafkaCloud: Boolean,
+    private val isKafkaCloud: Boolean = false,
     private val bootstrapServers: String,
     private val consumerGroupId: String,
     private val clientId: String? = null,
