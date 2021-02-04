@@ -87,8 +87,7 @@ class RapidApplication internal constructor(
             log.info("publishing $event event for app_name=$appName, instance_id=$instanceId")
             try {
                 rapidsConnection.publish(it)
-            } catch (err: Exception) {
-            }
+            } catch (err: Exception) { }
         }
     }
 
@@ -105,8 +104,7 @@ class RapidApplication internal constructor(
     companion object {
         private val log = LoggerFactory.getLogger(RapidApplication::class.java)
 
-        fun create(env: Map<String, String>, configure: (ApplicationEngine, KafkaRapid) -> Unit = { _, _ -> }) =
-            Builder(RapidApplicationConfig.fromEnv(env)).build(configure)
+        fun create(env: Map<String, String>, configure: (ApplicationEngine, KafkaRapid) -> Unit = {_, _ -> }) = Builder(RapidApplicationConfig.fromEnv(env)).build(configure)
     }
 
     class Builder(private val config: RapidApplicationConfig) {
@@ -159,18 +157,15 @@ class RapidApplication internal constructor(
                     rapidTopic = env.getValue("KAFKA_RAPID_TOPIC"),
                     extraTopics = env["KAFKA_EXTRA_TOPIC"]?.split(',')?.map(String::trim) ?: emptyList(),
                     kafkaConfig = KafkaConfig(
-                        isKafkaCloud = !env["KAFKA_TRUSTSTORE_PATH"].isNullOrBlank(),
                         bootstrapServers = env.getValue("KAFKA_BOOTSTRAP_SERVERS"),
                         consumerGroupId = env.getValue("KAFKA_CONSUMER_GROUP_ID"),
                         clientId = instanceId,
-                        username = "/var/run/secrets/nais.io/service_user/username".readFile() ?: getValueFromEnvSafe("KAFKA_SERVICEUSER_USER", env),
-                        password = "/var/run/secrets/nais.io/service_user/password".readFile() ?: getValueFromEnvSafe("KAFKA_SERVICEUSER_PWD", env),
+                        username = "/var/run/secrets/nais.io/service_user/username".readFile(),
+                        password = "/var/run/secrets/nais.io/service_user/password".readFile(),
                         truststore = env["NAV_TRUSTSTORE_PATH"],
                         truststorePassword = env["NAV_TRUSTSTORE_PASSWORD"],
-                        sslTruststoreLocationEnvKey = env["KAFKA_TRUSTSTORE_PATH"],
-                        sslTruststorePasswordEnvKey = env["KAFKA_TRUSTSTORE_PASSWORD"],
-                        sslKeystoreLocationEnvKey = env["KAFKA_KEYSTORE_PATH"],
-                        sslKeystorePasswordEnvKey = env["KAFKA_KEYSTORE_PASSWORD"],
+                        keystoreLocation = env["KAFKA_KEYSTORE_PATH"],
+                        keystorePassword = env["KAFKA_KEYSTORE_PASSWORD"],
                         autoOffsetResetConfig = env["KAFKA_RESET_POLICY"],
                         autoCommit = env["KAFKA_AUTO_COMMIT"]?.let { "true" == it.toLowerCase() },
                         maxIntervalMs = env["KAFKA_MAX_POLL_INTERVAL_MS"]?.toInt(),
@@ -186,14 +181,9 @@ class RapidApplication internal constructor(
             }
 
             private fun generateAppName(env: Map<String, String>): String? {
-                val appName =
-                    env["NAIS_APP_NAME"] ?: return log.info("not generating app name because NAIS_APP_NAME not set")
-                        .let { null }
-                val namespace =
-                    env["NAIS_NAMESPACE"] ?: return log.info("not generating app name because NAIS_NAMESPACE not set")
-                        .let { null }
-                val cluster = env["NAIS_CLUSTER_NAME"]
-                    ?: return log.info("not generating app name because NAIS_CLUSTER_NAME not set").let { null }
+                val appName = env["NAIS_APP_NAME"] ?: return log.info("not generating app name because NAIS_APP_NAME not set").let { null }
+                val namespace = env["NAIS_NAMESPACE"] ?: return log.info("not generating app name because NAIS_NAMESPACE not set").let { null }
+                val cluster = env["NAIS_CLUSTER_NAME"] ?: return log.info("not generating app name because NAIS_CLUSTER_NAME not set").let { null }
                 return "$appName-$cluster-$namespace"
             }
         }
@@ -204,12 +194,5 @@ private fun String.readFile() =
     try {
         File(this).readText(Charsets.UTF_8)
     } catch (err: FileNotFoundException) {
-        null
-    }
-
-private fun getValueFromEnvSafe(key: String, env: Map<String, String>) =
-    try {
-        env.getValue(key)
-    } catch (e: NoSuchElementException) {
         null
     }

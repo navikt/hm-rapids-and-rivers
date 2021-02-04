@@ -13,7 +13,6 @@ import java.util.*
 
 // Understands how to configure kafka from environment variables
 class KafkaConfig(
-    private val isKafkaCloud: Boolean = false,
     private val bootstrapServers: String,
     private val consumerGroupId: String,
     private val clientId: String? = null,
@@ -23,10 +22,8 @@ class KafkaConfig(
     private val truststorePassword: String? = null,
     private val javaKeystore: String? = "jks",
     private val pkcs12: String? = "PKCS12",
-    private val sslKeystoreLocationEnvKey: String? = null,
-    private val sslKeystorePasswordEnvKey: String? = null,
-    private val sslTruststoreLocationEnvKey: String? = null,
-    private val sslTruststorePasswordEnvKey: String? = null,
+    private val keystoreLocation: String? = null,
+    private val keystorePassword: String? = null,
     private val autoOffsetResetConfig: String? = null,
     private val autoCommit: Boolean? = false,
     maxIntervalMs: Int? = null,
@@ -64,7 +61,17 @@ class KafkaConfig(
 
     private fun kafkaBaseConfig() = Properties().apply {
 
-        if(isKafkaCloud != true){
+        if(keystoreLocation != null && keystorePassword != null){
+            put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
+            put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name)
+            put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "")
+            put(SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, javaKeystore)
+            put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, pkcs12)
+            put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststore)
+            put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, truststorePassword)
+            put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, keystoreLocation)
+            put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, keystorePassword)
+        } else {
             put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
             put(SaslConfigs.SASL_MECHANISM, "PLAIN")
             put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "PLAINTEXT")
@@ -84,16 +91,6 @@ class KafkaConfig(
                     log.error("Failed to set '${SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG}' location", ex)
                 }
             }
-        } else {
-            put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
-            put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name)
-            put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "")
-            put(SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, javaKeystore)
-            put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, pkcs12)
-            put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, sslTruststoreLocationEnvKey)
-            put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, sslTruststorePasswordEnvKey)
-            put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, sslKeystoreLocationEnvKey)
-            put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, sslKeystorePasswordEnvKey)
         }
     }
 }
