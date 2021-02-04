@@ -61,17 +61,7 @@ class KafkaConfig(
 
     private fun kafkaBaseConfig() = Properties().apply {
 
-        if(keystoreLocation != null && keystorePassword != null){
-            put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
-            put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name)
-            put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "")
-            put(SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, javaKeystore)
-            put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, pkcs12)
-            put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststore)
-            put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, truststorePassword)
-            put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, keystoreLocation)
-            put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, keystorePassword)
-        } else {
+        if(keystoreLocation.isNullOrBlank() || keystorePassword.isNullOrBlank()){
             put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
             put(SaslConfigs.SASL_MECHANISM, "PLAIN")
             put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "PLAINTEXT")
@@ -91,6 +81,16 @@ class KafkaConfig(
                     log.error("Failed to set '${SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG}' location", ex)
                 }
             }
+        } else {
+            put(CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers)
+            put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SSL.name)
+            put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "")
+            put(SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, javaKeystore)
+            put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, pkcs12)
+            put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststore)
+            put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, truststorePassword)
+            put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, keystoreLocation)
+            put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, keystorePassword)
         }
     }
 }
